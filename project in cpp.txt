@@ -1,0 +1,1188 @@
+﻿#include<iostream>
+#include<fstream>
+#include<string.h>
+#include<stdio.h>
+#include <iomanip>
+#include <vector>
+#include <conio.h>
+#include <windows.h>
+#include <ctime>
+using namespace std;
+class student_detail
+{
+	char name[20];
+	long enroll;
+public:
+	int score;
+	student_detail()
+		{
+		enroll=0;
+		score=0;
+		}
+	void getdetails()
+		{
+		cout<<"Enter Name:";
+		cin.ignore();
+		cin.getline(name,20);
+		cout<<"Enter Enroll:";
+		cin>>enroll;
+		}
+	int getenroll()
+		{
+		return enroll;
+		}
+	void showdetails()
+		{
+		cout<<"Name:"<<name<<endl;
+		cout<<"Enroll:"<<enroll<<endl;
+		cout<<"Score:"<<score<<endl;
+		}
+	void checkadddetails();
+	void updatequizscore(int,int);
+	void search(int);
+	void deleterecord(int);
+	};
+void student_detail::updatequizscore(int enroll,int s)
+    {
+	fstream f("studentdetail.dat",ios::in|ios::app|ios::binary);
+	student_detail s1;
+	int found=0;
+	while(f&&found==0)
+	{ f.read((char*)&s1,sizeof(student_detail));
+	 if(s1.enroll==enroll)
+		{
+		s1.score+=(s*10);
+		f.write((char*)&s1,sizeof(student_detail));
+		found=1;
+		}
+	 }
+ f.close();
+}
+void student_detail::search(int enroll)
+{        int found=0;
+	fstream f("studentdetail.dat",ios::in|ios::app|ios::binary);
+	student_detail s1;
+	while(f&&found==0)
+	{ f.read((char*)&s1,sizeof(student_detail));
+	  if(s1.enroll==enroll)
+	  {
+	   s1.showdetails();
+	   found=1;
+	  }
+       }
+f.close();
+}
+void student_detail::deleterecord(int enroll)
+{
+	fstream f("studentdetail.dat",ios::in|ios::app|ios::binary);
+	fstream f1("temp.dat",ios::in|ios::app|ios::binary);
+	student_detail s1;
+	while(f)
+	{f.read((char*)&s1,sizeof(student_detail));
+	if(s1.enroll!=enroll)
+	f1.write((char*)&s1,sizeof(student_detail));
+	}
+       f.close();
+       f1.close();
+	remove("studentdetail.dat");
+       rename("temp.dat","studentdetail.dat");
+}
+void student_detail::checkadddetails()
+      {  
+	fstream f("studentdetail.dat",ios::in|ios::app|ios::binary);
+	student_detail s,s1;
+	s1.getdetails();
+	while(f)
+	{
+	      	f.read((char*)&s,sizeof(student_detail));
+	       	if((strcmp(s1.name,s.name)==0)&&(s.enroll==s1.enroll))
+		 	{
+		   		cout<<"User already exists";
+		     		break;
+		       	}
+		else f.write((char*)&s1,sizeof(student_detail));
+	
+	}
+	f.close();
+}
+class Quiz:public student_detail
+{
+public:
+	int ip;
+	void instructions()
+	{
+	cout<<"\t\tHello buddy :-)"<<endl;
+	cout<<"\tThis quiz is designed for 3 topics namely:"<<endl;
+	cout<<"\t1.Basic Mathematics"<<endl;
+	cout<<"\t2.Science"<<endl;
+	cout<<"\t3.General Knowledge"<<endl;
+	cout<<"\tEach of these topics contain 5 questions"<<endl;
+	cout<<"\tFor every correct answer you will be awarded 10 points and for wrong answer no points would be awarded"<<endl;
+	cout<<"\t\tEnjoy...;-)"<<endl;
+	}
+int mathquiz();
+int science();
+int gk();
+void ply()
+{
+  Quiz q;
+ student_detail s1;
+
+ int i,s,c;
+  q.instructions();
+  q.getdetails();
+  cout<<"Enter your choice(1-3):";
+  cin>>i;
+  switch(i)
+ {
+  case 1:{
+	 c=q.mathquiz();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+  case 2:{
+	c= q.science();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+  case 3:{
+	 c=q.gk();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+ default:cout<<"Incorrect choice";
+}
+cout<<"Enter enroll no. to be searched and displayed:";
+cin>>s;
+q.search(s);
+q.showdetails();
+}
+};
+int Quiz::mathquiz()
+{ int s1=0;
+ cout<<"Welcome"<<" "<<"to Maths quiz"<<endl;
+cout<<"Q1. 2 + 2 - 2 × 2 ÷ 2 = ?"<<endl;
+cout<<"1. 0"<<endl;
+cout<<"2. 1"<<endl;
+cout<<"3. 2"<<endl;
+cout<<"4. 4"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==3)
+{cout<<"Correct!!"<<endl;
+s1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q2. |2| + |-2| + (2)2 + (-2)2 = ?"<<endl;
+cout<<"1. 6"<<endl;
+cout<<"2. 8"<<endl;
+cout<<"3. 10"<<endl;
+cout<<"4. 12"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==4)
+{cout<<"Correct!!"<<endl;
+s1++;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+
+cout<<"Q3. If x = -1, then what is the value of the function "<<endl;
+cout<<"1. 7"<<endl;
+cout<<"2. 9"<<endl;
+cout<<"3. 11"<<endl;
+cout<<"4. 13"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==1)
+{cout<<"Correct!!"<<endl;
+s1++;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q4. What comes next in the sequence: 2, 4, 10, 28, ___ ?"<<endl;
+cout<<"1. 64"<<endl;
+cout<<"2. 70"<<endl;
+cout<<"3. 76"<<endl;
+cout<<"4. 82"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==4)
+{cout<<"Correct!!"<<endl;
+s1++;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q5. What is the 31st term of the sequence: 1, 4, 7, 10, .... ?"<<endl;
+cout<<"1. 90"<<endl;
+cout<<"2. 91"<<endl;
+cout<<"3. 92"<<endl;
+cout<<"4. 93"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==2)
+{cout<<"Correct!!"<<endl;
+s1++;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+return s1;
+ }
+int Quiz::science()
+{int score1=0;
+cout<<"Welcome"<<" "<<"to Science quiz"<<endl;
+cout<<"Q1.The Sun’s mass is mainly consist of"<<endl;
+cout<<" 1. hydrogen"<<endl;
+cout<<" 2. helium"<<endl;
+cout<<" 3. carbon dioxide"<<endl;
+cout<<" 4. nitrogen"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==1)
+{cout<<"Correct!!"<<endl;
+score1++;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+
+cout<<"Q2. The SI unit of charge is"<<endl;
+cout<<" 1. Ampere"<<endl;
+cout<<" 2. Coulomb"<<endl;
+cout<<" 3. Ohm"<<endl;
+cout<<" 4. Volt"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==2)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q3. Very High Frequency (VHF) have __________ wavelengths."<<endl;
+cout<<" 1. shorter"<<endl;
+cout<<" 2. shortest"<<endl;
+cout<<" 3. longer"<<endl;
+cout<<" 4. longest"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==1)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+
+cout<<"Q4. Long-sight defect could be corrected by using __________ lens."<<endl;
+cout<<" 1. concave"<<endl;
+cout<<" 2. convex"<<endl;
+cout<<" 3. diverging"<<endl;
+cout<<" 4. none of these"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==2)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+
+cout<<"Q5. Deficiency of Vitamin-A results in"<<endl;
+cout<<" 1. night blindness"<<endl;
+cout<<" 2. rickets"<<endl;
+cout<<" 3. scurvy"<<endl;
+cout<<" 4. hair fall"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==1)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+return score1;
+}
+int Quiz::gk()
+{int score1=0;
+cout<<"Welcome"<<" "<<"to G K quiz"<<endl;
+
+cout<<"Q1.Organisation of Islamic Cooperation (OIC) was founded on"<<endl;
+cout<<" 1. September 25, 1966"<<endl;
+cout<<" 2. September 25, 1967"<<endl;
+cout<<" 3. September 25, 1964"<<endl;
+cout<<" 4. September 25, 1969"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==4)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q2.The OIC was founded in"<<endl;
+cout<<" 1. Saudi Arabia"<<endl;
+cout<<" 2. Iraq"<<endl;
+cout<<" 3. Qatar"<<endl;
+cout<<" 4. Morocco"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==1)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q3.The United Nations has ________ principal organs."<<endl;
+ cout<<" 1. 4"<<endl;
+ cout<<" 2. 5"<<endl;
+ cout<<" 3. 6"<<endl;
+ cout<<" 4. 7"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==3)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+
+cout<<"Q4.The 6th organ, Trusteeship Council of the United Nations suspended operation on November 01, 1994, with the independence of"<<endl;
+ cout<<" 1. Chad"<<endl;
+ cout<<" 2. Sudan"<<endl;
+ cout<<" 3. Palau"<<endl;
+ cout<<" 4. Tunisia"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==4)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+cout<<"Q5.The International Monetary Fund (IMF) was founded on"<<endl;
+ cout<<" 1. 27 December 1944"<<endl;
+ cout<<" 2. 27 December 1945"<<endl;
+ cout<<" 3. 27 December 1946"<<endl;
+ cout<<" 4. 27 December 1947"<<endl;
+cout<<"Enter answer:";
+cin>>ip;
+if(ip==2)
+{cout<<"Correct!!"<<endl;
+score1+=1;
+}
+else
+{cout<<"Wrong!!!"<<endl;
+}
+return score1;
+}
+void ply()
+{
+  Quiz q;
+ student_detail s1;
+
+ int i,s,c;
+  q.instructions();
+  s1.checkadddetails();
+  cout<<"Enter your choice(1-3):";
+  cin>>i;
+  switch(i)
+ {
+  case 1:{
+	 c=q.mathquiz();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+  case 2:{
+	c= q.science();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+  case 3:{
+	 c=q.gk();
+	 q.updatequizscore(q.getenroll(),c);
+	 break;
+	 }
+ default:cout<<"Incorrect choice";
+}
+cout<<"Enter enroll no. to be searched and displayed:";
+cin>>s;
+q.search(s);
+}
+class tictactoe :public student_detail
+{
+private:
+	int rowcrossed(char board[][3])
+{
+	int e;
+    for (e=0; e<3; e++)
+    {
+        if (board[e][0] == board[e][1] &&
+            board[e][1] == board[e][2] &&
+            board[e][0] != ' ')
+            return (1);
+    }
+    return(0);
+}
+int columncrossed(char board[][3])
+{ int f;
+    for ( f=0; f<3; f++)
+    {
+        if (board[0][f] == board[1][f] &&
+            board[1][f] == board[2][f] &&
+            board[0][f] != ' ')
+            return (1);
+    }
+    return(0);
+}
+int diagonalcrossed(char board[][3])
+{
+    if (board[0][0] == board[1][1] &&
+        board[1][1] == board[2][2] &&
+        board[0][0] != ' ')
+        return(1);
+
+    if (board[0][2] == board[1][1] &&
+        board[1][1] == board[2][0] &&
+         board[0][2] != ' ')
+        return(1);
+
+    return(0);
+}
+void showboard(char board[][3])
+{
+    cout<<"\n\n";
+
+    cout<<"\t\t\t  "<<board[0][0]<<" | "<<board[0][1]<<" | "<<board[0][2]<<"\n";
+    cout<<"\t\t\t--------------\n";
+    cout<<"\t\t\t  "<<board[1][0]<<" | "<<board[1][1]<<" | "<<board[1][2]<<"\n";
+    cout<<"\t\t\t--------------\n";
+    cout<<"\t\t\t  "<<board[2][0]<<" | "<<board[2][1]<<" | "<<board[2][2]<<"\n";
+
+    return;
+}
+void showinstructions()
+{
+    cout<<"\t\t\t  Tic-Tac-Toe\n\n";
+    cout<<"Choose a cell numbered from 1 to 9 as below"
+            " and play\n\n";
+
+    cout<<"\t\t\t  1 | 2  | 3  \n";
+    cout<<"\t\t\t--------------\n";
+    cout<<"\t\t\t  4 | 5  | 6  \n";
+    cout<<"\t\t\t--------------\n";
+    cout<<"\t\t\t  7 | 8  | 9  \n\n";
+
+    cout<<"-\t-\t-\t-\t-\t-\t-\t-\t-\t-\n\n";
+
+
+}
+int gameover(char board[][3])
+{
+    return(rowcrossed(board) || columncrossed(board)
+            || diagonalcrossed(board) );
+}
+public:
+
+void play_game(){
+	char board[3][3];
+	int t=1;
+	int l=1;
+	int a,p,q,u,i;
+	char s[100],d[100];
+	cout<<"enter the name of player1\n";
+	cin>>s;
+	cout<<"enter the name of player2\n";
+	cin>>d;
+		a=0;
+		showinstructions();
+		for(i=1;i<=9;i++)
+		{
+			if(i%3!=0)
+			{
+				p=(i-1)/3;
+				q=(i%3)-1;
+				board[p][q]=' ';
+			}
+			else
+			{
+				p=(i-1)/3;
+				q=2;
+				board[p][q]=' ';
+			}
+
+		}
+		while(a!=9)
+		{
+			if(t==1)
+			{
+				cout<<"player1's turn\n";
+				cin>>u;
+				if(u%3!=0)
+			{
+				p=(u-1)/3;
+				q=(u%3)-1;
+				board[p][q]='x';
+			}
+			else
+			{
+				p=(u-1)/3;
+				q=2;
+				board[p][q]='x';
+			}
+				if(gameover(board)==1)
+				{
+					showboard(board);
+					cout<<s;
+					cout<<" is a winner\n";
+					break;
+					}
+				else
+				{a=a+1;
+				t=2;}
+				showboard(board);
+
+			}
+			else if(t==2)
+			{
+				cout<<"player2's turn\n";
+				cin>>u;
+				if(u%3!=0)
+			{
+				p=(u-1)/3;
+				q=(u%3)-1;
+				board[p][q]='o';
+			}
+			else
+			{
+				p=(u-1)/3;
+				q=2;
+				board[p][q]='o';
+			}
+				if(gameover(board)==1)
+				{
+					showboard(board);
+					cout<<d;
+					cout<<" is a winner\n";
+					break;
+					}
+				else
+				{a=a+1;
+				t=1;}
+				showboard(board);
+			}
+			if(a==9)
+			{
+				cout<<"game is draw\n";
+            }
+		}
+}
+};
+class Snake:public student_detail
+{
+private:
+    int x,z,Dollars,y,Bonus,time,tail;
+    char *map;
+    bool L,R,D,U,A;
+    std::vector <int> past;
+
+public:
+	char name[50];
+    Snake()
+    {
+        map = new char [2000];
+        L = 0;
+        R = 1;
+        D = 0;
+        U = 0;
+        A = 0;
+        tail = 1;
+        x = 1000;
+        Dollars = 0;
+        Bonus = 0;
+        time = 40;
+        z = 1;
+	}
+
+    ~Snake()
+    {
+        delete [] map;
+    }
+
+    void Graphics ();
+    void GameLogic();
+    void KEYBOARD ();
+    void Pineapple();
+    int GameOver ();
+    void Start();
+    friend void clearscreen();
+    friend void sp();
+    friend void s();
+};
+
+void clearscreen()
+{
+    HANDLE hOut;
+    COORD Position;
+
+    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    Position.X = 0;
+    Position.Y = 0;
+    SetConsoleCursorPosition(hOut, Position);
+}
+
+void sp(int choosecolor)
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), choosecolor);
+}
+void s()
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+
+}
+
+void Snake::Start()
+{
+	cout << "Enter your name : " << endl;
+    cin >> name;
+    for(int p = 0;p < 2000;p++)
+    {
+        map[p] = ' ';
+    }
+
+    map[ x ] = char(219);
+    Pineapple();
+    Graphics();
+}
+
+int Snake::GameOver()
+{
+    Sleep(2500);
+    system("cls");
+    std::cout <<     std::endl << "Oops..."<<name<<", you earned " << Dollars + Bonus << " Rupees...";
+
+    Sleep(2000);
+    return 0;
+}
+void Snake::Graphics()
+{
+    sp(697);
+    std::cout << Dollars + Bonus << " Snake By Snakes";
+    std::cout << "\n";
+    s();
+    for(int u = 0;u < 50;u++)
+    {
+        sp(750);
+        std::cout << char(219);
+        s();
+    }
+
+	std::cout <<     std::endl;
+/***********************************************************************/
+    for(int x1 = 0;x1 < 2000 ; x1++)
+    {
+        if(x1 % 50 == 0 && x1 != 0)
+        {
+            std::cout <<     std::endl;
+        }
+        if(x1 % 50 == 0 || (x1-(x1 / 50)) % 49 == 0)
+		{
+            map[x1] = char(219);
+            sp(750);
+            std::cout << map[x1];
+            s();
+		}
+	else if(map[x1]!=char(219) && map[x1]!=map[z])
+    {
+        std::cout << map[x1];
+    }
+    else if(x1 == z)
+    {
+        sp(10);
+        std::cout << map[x1];
+        s();
+    }
+    else
+    {
+        sp(750);
+        std::cout << map[x1];
+        s();
+	}
+
+    }
+
+	std::cout <<     std::endl;
+/***********************************************************************/
+    for(int u = 0;u < 50;u++)
+    {
+        sp(750);
+        std::cout << char(219);
+        s();
+    }
+    if(U == 1 || D == 1)
+	{
+        Sleep(19);
+    }
+    if(map[z] == char(5))
+    {
+        time--;
+        if(time == 0)
+		{
+            Dollars++;
+            time = 40;
+            Pineapple();
+        }
+    }
+
+    clearscreen();
+    GameLogic();
+}
+
+void Snake::Pineapple()
+{
+    map[z] = ' ';
+    if(Dollars % 8 != 0 || Dollars == 0)
+
+    {
+        while(map[z] != ' ' && z % 50 != 0 && (z-(z/50)) % 49!= 0);
+
+        {
+            z = rand()%200 + 1;
+		}
+
+	    map[z] = char(229);
+
+    }
+
+    else
+    {
+        while(map[z] != ' ' && z % 50 != 0 && (z-(z/50)) % 49 != 0);
+
+        {
+            z = rand()%2000 + 1;
+        }
+        map[z] = char(5);
+    }
+
+}
+
+void Snake::KEYBOARD()
+{
+/***********************************************************************************************/
+if(_kbhit())
+
+{
+    char key;
+    key = _getch();
+    switch( key )
+    {
+        case 'd':
+            {
+
+
+            if (L == 0)
+
+            {
+                L = 0, U = 0, D = 0,
+                R = 1;
+			}
+            break;
+        }
+
+        case 'w':
+        {
+            if (D == 0)
+            {
+                L = 0, D = 0, R = 0,
+                U = 1;
+            }
+        break;
+        }
+
+        case 'a':
+        {
+            if (R == 0)
+            {
+                D = 0, U = 0, R = 0,
+                L = 1;
+			}
+        break;
+        }
+
+        case 's':
+        {
+            if (U == 0)
+            {
+                L = 0, U = 0, R = 0,
+                D = 1;
+            }
+        break;
+        }
+
+    }
+
+}
+}
+
+/**************************************************************************/
+void Snake::GameLogic()
+{
+    past.insert(past.begin(),x);
+    KEYBOARD();
+    if(R == 1)
+    {
+        x++;
+    }
+    else if(L == 1)
+    {
+        x--;
+    }
+    else if(U == 1)
+    {
+        x-= 50;
+    }
+    else
+    {
+        x+= 50;
+    }
+    if(map[ x ] == char(219) || x % 50 == 0 || x > 2000 || x < 0 || (x-(x / 50)) % 49 == 0)
+
+    {
+        GameOver();
+        return;
+    }
+    if(map[x] == char(229))
+
+    {
+        A = true;
+        tail++;
+        Pineapple();
+        Dollars++;
+	}
+    else if (map[x] == char(5))
+    {
+        A = true;
+        tail++;
+        Pineapple();
+        Bonus+=time;
+    }
+
+    map[x] = char(219);
+
+/**********/
+    if(A == false)
+    {
+        y = past[past.size() - tail];
+        map[y] = ' ';
+    }
+
+    A = false;
+    if(tail!=1)
+    {
+        for(int u = past.size() - 2;u > 0;u--)
+		{
+            past[u+1] = past[u];
+        }
+    past.erase(past.end()-tail);
+    }
+    else
+    {
+        past.erase(past.begin());
+    } //
+    Graphics();
+}
+class cricket :public student_detail
+{
+public:	
+int GetPlayerToss(char player1[],char player2[],int oversToplay)
+{
+ int player1Choice,player2Choice,toss,player1Toss,batorbowlChoice,player2Score,player1Score;
+     cout<<player1<<" Choose your choice either 1 for head or 2 for tail: ";
+  cin>>player1Choice;
+  if(player1Choice==1)
+  {
+   player2Choice=2;
+   cout<<player2<<" Choice is Tail\n";
+  }
+  else if(player1Choice==2)
+  {
+   player2Choice=1;
+   cout<<player2<<" Choice is Head\n";
+  }
+  else
+  {
+   cout<<"--------------------------------------------Invalid Choice--------------------------------------------\n";
+   return(0);
+  }
+  toss=rand()%2;
+  toss=toss+1;
+  if(toss==1)
+  cout<<"Toss is Head\n";
+  else
+  cout<<"Toss is Tail\n";
+  if(toss==player1Choice)
+  {
+   player1Toss=1;
+   cout<<player1<<" Won the Toss\n";
+   cout<<"Choose1 - Batting\n";
+   cout<<"Choose2 - Bowl: ";
+   cin>>batorbowlChoice;
+   if(batorbowlChoice==1)
+   {
+        cout<<"----------------"<<player1<<" is Going to bat Now-----------------------\n";
+    player1Score=batting(player1,player2,oversToplay);
+    cout<<"----------------"<<player2<<" is Going to bat Now-----------------------\n";
+    player2Score=batting(player2,player1,oversToplay);
+    cout<<"----------------Its Time for Results-----------------------\n";
+   }
+   else
+   {
+    cout<<"----------------"<<player2<<" is Going to bat Now-----------------------\n";
+    player2Score=batting(player2,player1,oversToplay);
+    cout<<"----------------"<<player1<<" is Going to bat Now-----------------------\n";
+    player1Score=batting(player1,player2,oversToplay);
+    cout<<"----------------Its Time for Results-----------------------\n";
+   }
+  }
+  else if(toss==player2Choice)
+  {
+   player1Toss=2;
+   cout<<player2<<" Won the Toss\n";
+   cout<<"Choose1 - Batting";
+   cout<<"Choose2 - Bowl: ";
+   cin>>batorbowlChoice;
+   if(batorbowlChoice==1)
+   {
+    cout<<"----------------"<<player2<<" is Going to bat Now-----------------------\n";
+    player2Score=batting(player2,player1,oversToplay);
+    cout<<"----------------"<<player1<<" is Going to bat Now-----------------------\n";
+    player1Score=batting(player1,player2,oversToplay);
+    cout<<"----------------Its Time for Results-----------------------\n";
+   }
+   else
+   {
+    cout<<"----------------"<<player1<<" is Going to bat Now-----------------------\n";
+    player1Score=batting(player1,player2,oversToplay);
+    cout<<"----------------"<<player2<<" is Going to bat Now-----------------------\n";
+    player2Score=batting(player2,player1,oversToplay);
+    cout<<"----------------Its Time for Results-----------------------\n";
+   }
+  }
+  else
+  {
+   cout<<"------------------------------------------------Error-------------------------------------------------\n";
+   return(0);
+  }
+  if(player1Score==player2Score)
+  {
+   cout<<"Draw Match\nThanks For Playing the Game\n";
+  }
+  if(player1Score>player2Score)
+  cout<<player1<<" Won the Match\nThanks for Playing the Game\n";
+  if(player1Score<player2Score)
+  cout<<player2<<" Won the Match\nThanks for Playing the Game\n";
+  return(player1Toss);
+}
+
+int batting(char battingplayer[],char bowlingplayer[],int oversToplay)
+{
+ int i,j,battingScore,sum=0,bowlerSocre,flag=1;
+ char c;
+ if(oversToplay>0)
+ {
+  for(i=1;i<=oversToplay;i++)
+  {
+   for(j=1;j<=6;j++)
+   {
+    cout<<i<<"."<<j<<" ball\n";
+    cout<<bowlingplayer<<" press B to bowl :";
+    fflush(stdin);
+    cin>>c;
+    fflush(stdin);
+    bowlerSocre=(int)rand()%7;//Generate from 0-6 where 0 means no ball
+    cout<<battingplayer<<" press A to bat :";
+    fflush(stdin);
+    cin>>c;
+    fflush(stdin);
+    battingScore=rand()%7;//Generate 0-6 runs
+    if(battingScore==bowlerSocre)
+    {
+     flag=0;
+     cout<<"-----------------"<<battingplayer<<" is Out----------------\n";
+     cout<<battingplayer<<"Total Score="<<sum<<" \n";
+     if(sum==0)
+            cout<<"-----------Hehehe Duck Out-----------------\n";
+     break;
+    }
+    else
+    {
+     cout<<"Got "<<battingScore<<" runs\n";
+                    if(battingScore==6)
+                    cout<<"Sixerrrrrr Keep it Up\n";
+                    if(battingScore==4)
+               cout<<"Its a Four Great Man\n";
+     sum=sum+battingScore;
+     cout<<battingplayer<<" Score="<<sum<<"\n";
+    }
+   }
+   if(flag==0)
+   break;
+  }
+
+  return(sum);
+ }
+   if(oversToplay==0)
+   {
+      while(flag)
+      {
+        cout<<bowlingplayer<<" press B to bowl :";
+  fflush(stdin);
+  cin>>c;
+  fflush(stdin);
+  bowlerSocre=(int)rand()%7;//Generate from 0-6 where 0 means no ball
+  cout<<battingplayer<<" press A to bat :";
+  fflush(stdin);
+  cin>>c;
+  fflush(stdin);
+  battingScore=rand()%7;//Generate 0-6 runs
+  if(battingScore==bowlerSocre)
+  {
+   flag=0;
+   cout<<"-----------------"<<battingplayer<<" is Out----------------\n";
+   cout<<battingplayer<<" Total Score= "<<cout<<sum;
+   if(sum==0)
+   cout<<"-----------Hehehe Duck Out-----------------"<<endl;
+   break;
+  }
+  else
+  {
+   cout<<"Got "<<battingScore<<"runs";
+            if(battingScore==6)
+            cout<<"Sixerrrrrr Keep it Up"<<endl;
+            if(battingScore==4)
+       cout<<"Its a Four Great Man"<<endl;
+   sum+=battingScore;
+   cout<<" Score="<<battingplayer<<"and the score is"<<cout<<sum;
+  }
+      }
+      return(sum);
+   }
+
+}
+void run()
+{
+	 int i,j,overs,noovers,player1Toss,player2Toss;
+ char player1[50],player2[50];
+ srand(time(NULL));
+ cout<<"-----------------------------------WELCOME TO HAND CRICKET GAME-------------------------------------"<<endl;
+ cout<<"Enter Player 1 Name:";
+ fflush(stdin);
+ gets(player1);
+ cout<<"Enter Player 2 Name:";
+ fflush(stdin);
+ gets(player2);
+ cout<<"Enter\n1 - Fixed Overs\n2 - Play Until Out\n3 - How to Play?\n4 - Exit: ";
+ cin>>noovers;
+  do{
+ if(noovers==1)
+ {
+  cout<<"Enter No Of Overs: ";
+  cin>>overs;
+  player1Toss=GetPlayerToss(player1,player2,overs);
+
+ }
+ else if(noovers==2)
+ {
+  player1Toss=GetPlayerToss(player1,player2,0);
+ }
+ else if(noovers==3)
+ {
+  cout<<"How To Play?"<<endl;
+  cout<<"Until a player Won the toss Follow the Output and give whatever it asks you to give"<<endl;
+  cout<<"Then the Player who won the toss chooses either to Bat or to Bowl"<<endl;
+  cout<<"The Player who chose batting and bowling has to proceed by pressing enter Key one by one"<<endl;
+  cout<<"Where System will generate Random number as runs for both players.Player 1 runs keeps on adding until his runs equals to player 2 runs"<<endl;
+  cout<<"Finally When Player 1 is Out.Till then his runs are his final Score.The Same process will be Conducted for player 2"<<endl;
+  cout<<"Finally whoever is having Highest Score is the Winner"<<endl;
+  cout<<"For Example: Player 1 Won the Toss And Chose Batting.Then When Player 1 Press Enter Key,A score will be generated for Player 1"<<endl;
+  cout<<"Suppose runs are 5 So Player 1 Score=5.Then Player 2 Also Presses Enter key.Then if he got a Score of 4.So Player 2 Score =4\n";
+  cout<<"As Player 1 Score is not equal to player 2 Score Then Player 1 is not out and hi score will be 5 after 1st ball \n";
+  cout<<"In 2nd ball Player 1 got 3 runs and Player 2 got 4.Since again both are not equal.Player 1 Score=5+3=8\n";
+  cout<<"If in the 3rd Ball Player 1 got 4 runs and Player 2 also got 4 runs Then Player 1 Score is equal to Player 2's Score Then Player 1 is Out\n";
+  cout<<"Then Final Score of player 1 is 8 runs.\n";
+  cout<<"The Same Process is done for Player 2.So Finaly who ever got more score is Winner\n";
+ }
+ else
+ {
+  cout<<"--------------------------------------------Invalid Choice--------------------------------------------\n";
+ }
+ cout<<"Enter 1 - Fixed Overs\n2 - Play Until Out\n3 - How to Play?\n4 - Exit: ";
+ cin>>noovers;
+  }while(noovers>=1 && noovers<=3);
+}
+};
+
+int main()
+{
+	char o;
+	int d,i;
+	cout<<"                       WELCOME TO JIIT GAMING ARENA\n";
+	cout<<"Let's start\n";i=1;
+	while(i!=0)
+	{
+	cout<<"1.play tic tac toe\n";
+	cout<<"2.to play cricket\n";
+	cout<<"3.play quiz\n";
+	cout<<"4.play snake game\n";
+	cin>>d;
+	switch(d)
+	{
+	case 1:
+	{
+		tictactoe t;
+		t.play_game();
+		break;
+		}
+	case 2:
+	{
+		cricket c;
+		c.run();
+		break;
+		}
+	case 3:
+		{
+			Quiz Q;
+			Q.ply();
+			break;
+		}
+	case 4:
+		{
+			srand((unsigned)time(0));
+    		Snake SNAKE;
+    		SNAKE.Start();
+			break;
+		}
+	}
+cout<<"want to play more?...press y or else to exit press n\n";
+			cin>>o;
+	if(o=='n')
+	{i=1;
+         break;
+        }
+}
+		
+}
