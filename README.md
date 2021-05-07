@@ -1,2 +1,2 @@
-# simi
-A menu driven program; has 4 games -snake,quiz,cricket,tictactoe;cpp language and file handling used
+# JIIT Gaming Arena
+A menu driven program that has Snake, Tic Tac Toe , Cricket and Quiz. This project was created for 2nd semester SDF Lab project
